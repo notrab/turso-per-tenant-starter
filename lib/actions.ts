@@ -27,6 +27,7 @@ export async function createMessage(
   workspaceId: string,
   channelId: number,
   content: string,
+  timestamp: string,
 ) {
   const userId = getCurrentUser(workspaceId);
   if (!userId) {
@@ -35,8 +36,8 @@ export async function createMessage(
 
   const db = getDbClient(workspaceId);
   await db.execute({
-    sql: "INSERT INTO messages (channel_id, user_id, content) VALUES (?, ?, ?)",
-    args: [channelId, userId, content],
+    sql: "INSERT INTO messages (channel_id, user_id, content, created_at) VALUES (?, ?, ?, ?)",
+    args: [channelId, userId, content, timestamp],
   });
 
   revalidatePath(`/workspaces/${workspaceId}/channels/${channelId}`);
@@ -180,6 +181,7 @@ export async function createDirectMessage(
   workspaceId: string,
   recipientId: number,
   content: string,
+  timestamp: string,
 ) {
   const userId = getCurrentUser(workspaceId);
   if (!userId) {
@@ -188,8 +190,8 @@ export async function createDirectMessage(
 
   const db = getDbClient(workspaceId);
   await db.execute({
-    sql: "INSERT INTO direct_messages (sender_id, recipient_id, content) VALUES (?, ?, ?)",
-    args: [userId, recipientId, content],
+    sql: "INSERT INTO direct_messages (sender_id, recipient_id, content, created_at) VALUES (?, ?, ?, ?)",
+    args: [userId, recipientId, content, timestamp],
   });
   revalidatePath(`/workspaces/${workspaceId}/dm/${recipientId}`);
   return { success: true };

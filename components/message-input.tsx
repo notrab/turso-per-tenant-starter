@@ -25,10 +25,12 @@ export function MessageInput({
     e.preventDefault();
     if (!message.trim()) return;
 
+    const timestamp = new Date().toISOString();
+
     if (isDirect && recipientId) {
-      await createDirectMessage(workspaceId, recipientId, message);
+      await createDirectMessage(workspaceId, recipientId, message, timestamp);
     } else if (channelId) {
-      await createMessage(workspaceId, channelId, message);
+      await createMessage(workspaceId, channelId, message, timestamp);
     }
 
     setMessage("");
