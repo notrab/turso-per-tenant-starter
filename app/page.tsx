@@ -20,7 +20,7 @@ export default async function HomePage() {
           {workspaces.map((workspace: string) => (
             <li key={workspace} className="mb-2">
               <Link
-                href={`/${workspace}`}
+                href={`/workspaces/${workspace}`}
                 className="text-blue-500 hover:underline"
               >
                 {workspace}
