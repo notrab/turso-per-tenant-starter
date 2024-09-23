@@ -2,10 +2,16 @@ import { redirect } from "next/navigation";
 
 import { getDbClient } from "@/lib/db";
 import { CreateChannelForm } from "@/components/create-channel-form";
+import { getCurrentUser } from "@/lib/auth";
 
 type Params = { workspaceId: string };
 
 export default async function WorkspacePage({ params }: { params: Params }) {
+  const currentUser = getCurrentUser(params.workspaceId);
+  if (!currentUser) {
+    redirect(`/workspaces/${params.workspaceId}/login`);
+  }
+
   const db = getDbClient(params.workspaceId);
   const channelsResult = await db.execute(
     "SELECT * FROM channels ORDER BY id ASC LIMIT 1",

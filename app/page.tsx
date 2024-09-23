@@ -1,15 +1,8 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 
-import { getCurrentWorkspace } from "../lib/auth";
 import { fetchWorkspaces } from "../lib/actions";
 
 export default async function HomePage() {
-  const currentWorkspace = getCurrentWorkspace();
-  if (currentWorkspace) {
-    redirect(`/workspaces/${currentWorkspace}`);
-  }
-
   const workspaces = await fetchWorkspaces();
 
   return (

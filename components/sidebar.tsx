@@ -1,25 +1,21 @@
 import Link from "next/link";
 
-import { fetchWorkspaces } from "@/lib/actions";
-import { WorkspaceSwitcher } from "./workspace-switcher";
+import { getUserWorkspaces } from "@/lib/auth";
+import { WorkspaceSwitcher } from "@/components/workspace-switcher";
 
-export async function Sidebar({
-  currentWorkspace,
-}: {
-  currentWorkspace: string;
-}) {
-  const workspaces = await fetchWorkspaces();
+export function Sidebar({ currentWorkspace }: { currentWorkspace: string }) {
+  const userWorkspaces = getUserWorkspaces();
 
   return (
-    <div className="w-16 bg-[#043134] text-white p-2 flex flex-col items-center">
+    <div className="w-16 bg-[#043134] text-white px-2 py-4 flex flex-col items-center overflow-y-auto">
       <WorkspaceSwitcher
-        workspaces={workspaces}
+        workspaces={userWorkspaces}
         currentWorkspace={currentWorkspace}
       />
 
       <Link
-        href="/create-workspace"
-        className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center mt-2"
+        href="/"
+        className="w-10 h-10 rounded bg-white text-[#126F4C] flex items-center justify-center flex-shrink-0"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

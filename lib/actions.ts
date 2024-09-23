@@ -2,7 +2,13 @@
 
 import { getDbClient } from "./db";
 
-import { setCurrentWorkspace, getCurrentUser } from "./auth";
+import {
+  setCurrentUser,
+  setCurrentWorkspace,
+  addUserWorkspace,
+  logoutFromWorkspace,
+  getCurrentUser,
+} from "./auth";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
@@ -22,7 +28,7 @@ export async function createMessage(
   channelId: number,
   content: string,
 ) {
-  const userId = getCurrentUser();
+  const userId = getCurrentUser(workspaceId);
   if (!userId) {
     throw new Error("Unauthorized");
   }
@@ -80,9 +86,18 @@ export async function loginUser(workspaceId: string, username: string) {
     });
   }
 
-  revalidatePath(`/workspaces/${workspaceId}`);
+  if (userId) {
+    // @ts-expect-error "userId" type
+    setCurrentUser(workspaceId, userId);
+    setCurrentWorkspace(workspaceId);
+    addUserWorkspace(workspaceId);
 
-  return { success: true };
+    revalidatePath(`/workspaces/${workspaceId}`);
+
+    return { success: true };
+  }
+
+  return { success: false };
 }
 
 export async function fetchWorkspaces() {
@@ -166,7 +181,7 @@ export async function createDirectMessage(
   recipientId: number,
   content: string,
 ) {
-  const userId = getCurrentUser();
+  const userId = getCurrentUser(workspaceId);
   if (!userId) {
     throw new Error("Unauthorized");
   }
@@ -184,7 +199,7 @@ export async function fetchDirectMessages(
   workspaceId: string,
   otherUserId: number,
 ) {
-  const currentUserId = getCurrentUser();
+  const currentUserId = getCurrentUser(workspaceId);
   if (!currentUserId) {
     throw new Error("Unauthorized");
   }
@@ -209,4 +224,10 @@ export async function fetchDirectMessages(
   });
 
   return result.rows;
+}
+
+export async function logoutUser(workspaceId: string) {
+  logoutFromWorkspace(workspaceId);
+  revalidatePath(`/workspaces/${workspaceId}`);
+  return { success: true };
 }

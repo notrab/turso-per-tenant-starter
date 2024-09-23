@@ -14,7 +14,7 @@ export default async function DirectMessagePage({
   params: Params;
 }) {
   const db = getDbClient(params.workspaceId);
-  const currentUserId = getCurrentUser();
+  const currentUserId = getCurrentUser(params.workspaceId);
 
   if (!currentUserId) {
     redirect(`/workspaces/${params.workspaceId}/login`);
@@ -45,12 +45,9 @@ export default async function DirectMessagePage({
     <AutoRefresh>
       <div className="flex flex-col h-full">
         <div className="flex-grow overflow-hidden">
-          <div className="h-full overflow-y-auto pb-4">
-            <MessageList groupedMessages={groupedMessages} />
-          </div>
+          <MessageList groupedMessages={groupedMessages} />
         </div>
         <div className="flex-shrink-0">
-          <MessageList groupedMessages={groupedMessages} />
           <MessageInput
             recipientId={Number(params.userId)}
             workspaceId={params.workspaceId}

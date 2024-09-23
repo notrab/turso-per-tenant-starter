@@ -3,8 +3,21 @@ import Link from "next/link";
 import { fetchChannels, fetchUsers } from "@/lib/actions";
 import { CreateChannelForm } from "@/components/create-channel-form";
 import { ChannelList } from "./channel-list";
+import { getCurrentUser } from "@/lib/auth";
+import { LogoutButton } from "./logout-button";
 
 export async function ChannelSidebar({ workspaceId }: { workspaceId: string }) {
+  const currentUser = getCurrentUser(workspaceId);
+
+  if (!currentUser) {
+    return (
+      <div className="w-64 bg-[#0E1F22] text-white p-4">
+        <p>Please log in to view channels and users.</p>
+        <Link href={`/workspaces/${workspaceId}/login`}>Log In</Link>
+      </div>
+    );
+  }
+
   const channels = await fetchChannels(workspaceId);
   const users = await fetchUsers(workspaceId);
 
@@ -14,7 +27,7 @@ export async function ChannelSidebar({ workspaceId }: { workspaceId: string }) {
   }));
 
   return (
-    <div className="w-64 bg-[#0E1F22] text-white p-4">
+    <div className="w-64 bg-[#0E1F22] text-white p-4 overflow-y-auto">
       <h2 className="text-xl font-bold mb-4">Channels</h2>
       <ChannelList channels={plainChannels} workspaceId={workspaceId} />
       <CreateChannelForm workspaceId={workspaceId} />
@@ -34,6 +47,9 @@ export async function ChannelSidebar({ workspaceId }: { workspaceId: string }) {
           </li>
         ))}
       </ul>
+      <div className="mt-8">
+        <LogoutButton workspaceId={workspaceId} />
+      </div>
     </div>
   );
 }

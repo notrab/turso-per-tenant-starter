@@ -16,7 +16,7 @@ export function MessageList({
   groupedMessages: GroupedMessage[];
 }) {
   return (
-    <div className="flex flex-col justify-end h-full overflow-y-auto p-4">
+    <div className="flex flex-col-reverse h-full overflow-y-auto p-4">
       {groupedMessages.map((group) => (
         <div key={group.message_date} className="mb-6">
           <div className="text-center text-sm text-gray-500 mb-4">
